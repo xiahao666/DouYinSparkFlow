@@ -251,10 +251,10 @@ def do_user_task(browser, username, cookies, targets):
             url="https://creator.douyin.com/creator-micro/data/following/chat",
         )
 
-        logger.debug(f"账号 {username} 开始发送消息")
+        logger.info(f"账号 {username} 开始发送消息")
         # 滚动并选择用户
         for username in scroll_and_select_user(page, username, targets):
-            logger.debug(f"账号 {username} 已选中好友 {username} 发送消息")
+            logger.info(f"账号 {username} 已选中好友 {username} 发送消息")
             # 等待聊天输入框元素加载完成，使用更稳定的属性选择器
             chat_input_selector = "xpath=//div[contains(@class, 'chat-input-')]"
             page.wait_for_selector(chat_input_selector, timeout=config["browserTimeout"])
@@ -271,9 +271,10 @@ def do_user_task(browser, username, cookies, targets):
             logger.debug(
                 f"账号 {username} 准备发送消息给好友 {username}：\n\t{message}"
             )
-            logger.debug(f"账号 {username} 给好友 {username} 发送消息完成")
+            logger.info(f"账号 {username} 给好友 {username} 发送消息完成")
             # 模拟按下回车键发送消息
             chat_input.press("Enter")
+            logger.info(f"账号 {username} 已按下Enter发送消息给好友 {username}")
             time.sleep(2)  # 发送完等待一会儿
 
         # [调试] 输出调试信息
