@@ -122,17 +122,20 @@ def scroll_and_select_user(page, username, targets):
                     continue  # 已处理过，跳过
                 found_targets.add(targetName)
 
-                logger.debug(f"账号 {username} 找到好友 {targetName}")
+                logger.info(f"账号 {username} 找到好友 {targetName}")
                 # 检查是否是目标用户名
                 if matchMode == "short_id":
                     targetSymbol = next((sid for sid, info in userIDDict.items() if info.get("nickname") == targetName), None)
                 else:
                     targetSymbol = targetName
 
+                if targetSymbol is None:
+                    logger.info(f"账号 {username} 好友 {targetName} 在 userIDDict 中未找到对应 short_id，跳过")
                 if targetSymbol in targets:
+                    logger.info(f"账号 {username} 匹配成功: {targetName} (short_id={targetSymbol})")
                     element.click()
                     if matchMode == "short_id":
-                        logger.debug(
+                        logger.info(
                             f"账号 {username} 选中目标好友 {targetName} 准备开始交互"
                         )
                     else:
@@ -165,6 +168,8 @@ def scroll_and_select_user(page, username, targets):
                 logger.info(f"账号 {username} 检测到'没有更多了'标志，已到达底部")
                 if len(remaining_targets) > 0:
                     logger.warning(f"账号 {username} 搜索结束，仍有以下好友未找到: {remaining_targets}")
+                else:
+                    logger.info(f"账号 {username} 所有目标好友均已找到")
                 break
 
             # 2. [修复] 检查连续空滚动次数，防止死循环
@@ -172,6 +177,8 @@ def scroll_and_select_user(page, username, targets):
                 logger.warning(f"账号 {username} 连续 {MAX_EMPTY_SCROLLS} 次滚动未发现新好友，判定已到达底部")
                 if len(remaining_targets) > 0:
                     logger.warning(f"账号 {username} 搜索结束，仍有以下好友未找到: {remaining_targets}")
+                else:
+                    logger.info(f"账号 {username} 所有目标好友均已找到")
                 break
 
             # 3. 检查是否正在加载
