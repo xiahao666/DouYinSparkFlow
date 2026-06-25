@@ -122,20 +122,17 @@ def scroll_and_select_user(page, username, targets):
                     continue  # 已处理过，跳过
                 found_targets.add(targetName)
 
-                logger.info(f"账号 {username} 找到好友 {targetName}")
+                logger.debug(f"账号 {username} 找到好友 {targetName}")
                 # 检查是否是目标用户名
                 if matchMode == "short_id":
                     targetSymbol = next((sid for sid, info in userIDDict.items() if info.get("nickname") == targetName), None)
                 else:
                     targetSymbol = targetName
 
-                if targetSymbol is None:
-                    logger.info(f"账号 {username} 好友 {targetName} 在 userIDDict 中未找到对应 short_id，跳过")
                 if targetSymbol in targets:
-                    logger.info(f"账号 {username} 匹配成功: {targetName} (short_id={targetSymbol})")
                     element.click()
                     if matchMode == "short_id":
-                        logger.info(
+                        logger.debug(
                             f"账号 {username} 选中目标好友 {targetName} 准备开始交互"
                         )
                     else:
@@ -169,8 +166,7 @@ def scroll_and_select_user(page, username, targets):
                 if len(remaining_targets) > 0:
                     logger.warning(f"账号 {username} 搜索结束，仍有以下好友未找到: {remaining_targets}")
                 else:
-                    logger.info(f"账号 {username} 所有目标好友均已找到")
-                break
+                    break
 
             # 2. [修复] 检查连续空滚动次数，防止死循环
             if empty_scroll_count >= MAX_EMPTY_SCROLLS:
@@ -178,8 +174,7 @@ def scroll_and_select_user(page, username, targets):
                 if len(remaining_targets) > 0:
                     logger.warning(f"账号 {username} 搜索结束，仍有以下好友未找到: {remaining_targets}")
                 else:
-                    logger.info(f"账号 {username} 所有目标好友均已找到")
-                break
+                    break
 
             # 3. 检查是否正在加载
             if page.locator(loading_selector).count() > 0:
@@ -251,10 +246,10 @@ def do_user_task(browser, username, cookies, targets):
             url="https://creator.douyin.com/creator-micro/data/following/chat",
         )
 
-        logger.info(f"账号 {username} 开始发送消息")
+        logger.debug(f"账号 {username} 开始发送消息")
         # 滚动并选择用户
         for username in scroll_and_select_user(page, username, targets):
-            logger.info(f"账号 {username} 已选中好友 {username} 发送消息")
+            logger.debug(f"账号 {username} 已选中好友 {username} 发送消息")
             # 等待聊天输入框元素加载完成，使用更稳定的属性选择器
             chat_input_selector = "xpath=//div[contains(@class, 'chat-input-')]"
             page.wait_for_selector(chat_input_selector, timeout=config["browserTimeout"])
@@ -271,10 +266,10 @@ def do_user_task(browser, username, cookies, targets):
             logger.debug(
                 f"账号 {username} 准备发送消息给好友 {username}：\n\t{message}"
             )
-            logger.info(f"账号 {username} 给好友 {username} 发送消息完成")
+            logger.debug(f"账号 {username} 给好友 {username} 发送消息完成")
             # 模拟按下回车键发送消息
             chat_input.press("Enter")
-            logger.info(f"账号 {username} 已按下Enter发送消息给好友 {username}")
+            
             time.sleep(2)  # 发送完等待一会儿
 
         # [调试] 输出调试信息
