@@ -275,7 +275,9 @@ def do_user_task(browser, username, cookies, targets):
         missing = [t for t in targets if str(t) not in userIDDict]
         logger.info(f"=== 调试：userIDDict中不存在的targets(即接口未返回): {missing}")
         found_in_dict = [t for t in targets if str(t) in userIDDict]
-        logger.info(f"=== 调试：userIDDict中存在的targets: {[f'{t}->{userIDDict[str(t)][\"nickname\"]}' for t in found_in_dict]}")
+        for t in found_in_dict:
+            nick = userIDDict[str(t)].get("nickname", "?")
+            logger.info(f"=== 已映射: {t} -> {nick}")
 
         context.close()  # 任务完成后关闭上下文
 
