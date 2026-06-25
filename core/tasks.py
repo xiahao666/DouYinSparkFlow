@@ -269,6 +269,14 @@ def do_user_task(browser, username, cookies, targets):
             chat_input.press("Enter")
             time.sleep(2)  # 发送完等待一会儿
 
+        # [调试] 输出调试信息
+        logger.info(f"=== 调试：user_detail接口返回的所有short_id: {list(userIDDict.keys())}")
+        logger.info(f"=== 调试：目标targets列表: {targets}")
+        missing = [t for t in targets if str(t) not in userIDDict]
+        logger.info(f"=== 调试：userIDDict中不存在的targets(即接口未返回): {missing}")
+        found_in_dict = [t for t in targets if str(t) in userIDDict]
+        logger.info(f"=== 调试：userIDDict中存在的targets: {[f'{t}->{userIDDict[str(t)][\"nickname\"]}' for t in found_in_dict]}")
+
         context.close()  # 任务完成后关闭上下文
 
 
